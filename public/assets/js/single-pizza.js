@@ -18,14 +18,17 @@ function getPizza() {
 
     // get pizzaInfo
     fetch(`/api/pizzas/${pizzaId}`)
-        .then((response) => {
+        .then(response => {
+            console.log(response);
             if (!response.ok) {
+                console.log('hi');
                 throw new Error({ message: 'Something went wrong!' });
             }
+
             return response.json();
         })
         .then(printPizza)
-        .catch((err) => {
+        .catch(err => {
             console.log(err);
             alert('Cannot find a pizza with this id! Taking you back.');
             window.history.back();
@@ -46,7 +49,7 @@ function printPizza(pizzaData) {
     $size.textContent = size;
     $toppingsList.innerHTML = toppings
         .map(
-            (topping) =>
+            topping =>
                 `<span class="col-auto m-2 text-center btn">${topping}</span>`
         )
         .join('');
@@ -133,17 +136,17 @@ function handleNewCommentSubmit(event) {
         },
         body: JSON.stringify(formData),
     })
-        .then((response) => {
+        .then(response => {
             if (!response.ok) {
                 throw new Error('Something went wrong!');
             }
             response.json();
         })
-        .then((commentResponse) => {
+        .then(commentResponse => {
             console.log(commentResponse);
-            location.reload();
+            // location.reload();
         })
-        .catch((err) => {
+        .catch(err => {
             console.log(err);
         });
 }
@@ -165,6 +168,28 @@ function handleNewReplySubmit(event) {
     }
 
     const formData = { writtenBy, replyBody };
+
+    fetch(`/api/comments/${pizzaId}/${commentId}`, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Something went wrong!');
+            }
+            response.json();
+        })
+        .then(commentResponse => {
+            console.log(commentResponse);
+            location.reload();
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }
 
 $backBtn.addEventListener('click', function () {
